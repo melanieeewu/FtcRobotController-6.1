@@ -61,8 +61,11 @@ public class pushbotHardware {
 
     public DcMotor shooter;     //wheels to shoot rings
     public DcMotor shooter2;
-    public Servo intake1;       //right intake??
-    public Servo intake2;       //left intake??
+
+    public Servo pinwheel1;       //right intake to straighten ring
+    public Servo pinwheel2;       //left intake to straighten ring
+    public Servo pinwheel3;       // bottom pinwheel???
+    public Servo pinwheel4;
 
     public DcMotor pulley;      //pulley to lift for shooter
 
@@ -70,6 +73,16 @@ public class pushbotHardware {
     public DcMotor leftBack;
     public DcMotor rightFront;
     public DcMotor rightBack;
+
+    public Servo lift;  //wobble goal lifter
+    public Servo lift2;
+    public Servo lift3;
+
+    public Servo claw; //wobble goal clasp/claw
+
+    public DcMotor intake; //power intake
+
+    public Servo flicker;
 
 
     /* local OpMode members. */
@@ -80,8 +93,6 @@ public class pushbotHardware {
     public pushbotHardware() {
 
     }
-
-
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap hardwareMap) {
 
@@ -96,9 +107,21 @@ public class pushbotHardware {
         rightBack = hardwareMap.dcMotor.get("rightBack");
         rightFront = hardwareMap.dcMotor.get("rightFront");
 
+        intake = hardwareMap.dcMotor.get("intake");
+
         // Define and Initialize Servos
-        intake2 = hardwareMap.servo.get("intake1");
-        intake1 = hardwareMap.servo.get("intake2");
+        pinwheel1 = hardwareMap.servo.get("pinwheel1");
+        pinwheel2 = hardwareMap.servo.get("pinwheel2");
+        pinwheel3 = hardwareMap.servo.get("pinwheel3");
+        pinwheel4 = hardwareMap.servo.get("pinwheel4");
+
+        claw = hardwareMap.servo.get("claw");
+
+        lift = hardwareMap.servo.get("lift");
+        lift2= hardwareMap.servo.get("lift2");
+        lift3= hardwareMap.servo.get("lift3");
+
+        flicker = hardwareMap.servo.get("flicker");
 
         //Reversing motors and servos
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);

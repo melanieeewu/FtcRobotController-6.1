@@ -37,26 +37,41 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-
-
 @TeleOp(name="teleop", group="Iterative Opmode")
 public class teleop extends OpMode
+
 {
+    boolean changed = false;
     double shooterPower = 0;    //power for shooter
     double pulleyPower = 0;     //power for pulley
+    double intakePower = 0;     //power for intake
 
-    public DcMotor shooter;     //wheels to shoot rings
-    public DcMotor shooter2;
-    public Servo intake1;       //right intake??
-    public Servo intake2;       //left intake??
-
-    public DcMotor pulley;      //pulley to lift for shooter
-
+    //motors------------------------------------
     public DcMotor leftFront;   //drivetrainwheels
     public DcMotor leftBack;
     public DcMotor rightFront;
     public DcMotor rightBack;
 
+    public DcMotor shooter;     //wheels to shoot rings
+    public DcMotor shooter2;
+
+    public DcMotor pulley;      //pulley to lift for shooter
+
+    public DcMotor intake; //power intake
+
+    //servos----------------------------------
+    public Servo pinwheel1;       //right intake to straighten ring
+    public Servo pinwheel2;       //left intake to straighten ring
+    public Servo pinwheel3;       // bottom pinwheel???
+    public Servo pinwheel4;
+
+    public Servo lift;  //wobble goal lifter
+    public Servo lift2;
+    public Servo lift3;
+
+    public Servo claw; //wobble goal clasp/claw
+
+    public Servo flicker; //pushes ring to shooter
 
     @Override
     public void init() {
@@ -64,12 +79,14 @@ public class teleop extends OpMode
         shooter = hardwareMap.dcMotor.get("shooter");
         shooter2 = hardwareMap.dcMotor.get("shooter2");
 
-        intake2 = hardwareMap.servo.get("intake1");
-        intake1 = hardwareMap.servo.get("intake2");
+        pinwheel1 = hardwareMap.servo.get("pinwheel1");
+        pinwheel2 = hardwareMap.servo.get("pinwheel2");
+       pinwheel3 = hardwareMap.servo.get("pinwheel3");
+        pinwheel4 = hardwareMap.servo.get("pinwheel4");
 
         pulley = hardwareMap.dcMotor.get("pulley");
 
-        leftFront = hardwareMap.dcMotor.get("leftFront");
+       leftFront = hardwareMap.dcMotor.get("leftFront");
         leftBack = hardwareMap.dcMotor.get("leftBack");
         rightBack = hardwareMap.dcMotor.get("rightBack");
         rightFront = hardwareMap.dcMotor.get("rightFront");
@@ -77,7 +94,15 @@ public class teleop extends OpMode
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        lift = hardwareMap.servo.get("lift");
+        lift2= hardwareMap.servo.get("lift2");
+        lift3= hardwareMap.servo.get("lift3");
 
+        intake = hardwareMap.dcMotor.get("intake");
+
+        claw = hardwareMap.servo.get("claw");
+
+        flicker = hardwareMap.servo.get("flicker");
     }
     @Override
     public void loop() {
@@ -86,6 +111,7 @@ public class teleop extends OpMode
         float z;
 
         //GAMEPAD 2 ------------------------------------------
+        //drivetrain
         if (Math.abs(gamepad2.left_stick_x) > .1) {
             x = gamepad2.left_stick_x;
         } else {
@@ -104,36 +130,14 @@ public class teleop extends OpMode
             z = 0;
         }
 
-        if (gamepad1.x) {
-            shooterPower = 0.5;
-
-        } else if (gamepad1.y){
-            shooterPower = 0;
-
-        }
-
-
-        //GAMEPAD 1 ------------------------------------------
-
-        //intake
-        if((gamepad1.right_trigger) >0.1) {
-            intake1.setPosition(intake1.getPosition() + 0.1);
-
-        } else if ((gamepad1.left_trigger) >0.1) {
-            intake1.setPosition(intake1.getPosition() - 0.1);
-
-        } else {
-            intake1.setPosition(0.5);
-
-        }
-
-        /* pulley lift
+         /*   pulley lift
         left trigger = goes up
         right trigger = goes down */
-        if (Math.abs(gamepad1.left_trigger) > .1) {
+
+        if (Math.abs(gamepad2.left_trigger) > .1) {
             pulleyPower = -1;
 
-        } else if (Math.abs(gamepad1.right_trigger) > .1) {
+        } else if (Math.abs(gamepad2.right_trigger) > .1) {
             pulleyPower = 1;
 
         } else {
@@ -141,29 +145,101 @@ public class teleop extends OpMode
 
         }
 
+        //shooter
+        if (gamepad2.x) {
+            shooterPower = 1;
 
-        /*if((gamepad1.right_trigger) >0.1) {
-            intake2.setPosition(intake2.getPosition() + 0.1);
+        } else if (gamepad2.y){
+            shooterPower = 0;
+
+        }
+
+        //GAMEPAD 1 ------------------------------------------
+
+        //INTAKE--------------------------------------------
+
+        //intake pinwheels (moves in opposite directions)
+        if((gamepad1.right_trigger) >0.1) {
+            pinwheel2.setPosition(pinwheel2.getPosition() + 0.1);
+            pinwheel3.setPosition(pinwheel3.getPosition() + 0.1);
+            pinwheel1.setPosition(pinwheel1.getPosition() - 0.1);
+            pinwheel4.setPosition(pinwheel4.getPosition() - 0.1);
 
         } else if ((gamepad1.left_trigger) >0.1) {
-            intake2.setPosition(intake2.getPosition() - 0.1);
+            pinwheel2.setPosition(pinwheel2.getPosition() - 0.1);
+            pinwheel3.setPosition(pinwheel3.getPosition() - 0.1);
+            pinwheel4.setPosition(pinwheel4.getPosition() + 0.1);
+            pinwheel4.setPosition(pinwheel4.getPosition() + 0.1);
 
         } else {
-            intake2.setPosition(0.5);
+            pinwheel2.setPosition(0.5);
+            pinwheel3.setPosition(0.5);
+            pinwheel1.setPosition(0.5);
+            pinwheel4.setPosition(0.5);
+        }
+        //powers intake
+        if (Math.abs(gamepad1.left_trigger) > .1) {
+            intakePower = -1;
 
-        }*/
+        } else if (Math.abs(gamepad1.right_trigger) > .1) {
+            intakePower = 1;
+
+        } else {
+            intakePower = 0;
+        }
+
+        //flicker moves back and forth 90 degrees continuous
+        if ((gamepad1.right_trigger)>0.1) {
+            flicker.setPosition(flicker.getPosition() + 0.1);
+        } else if ((gamepad1.left_trigger) >0.1) {
+            flicker.setPosition(flicker.getPosition() - 0.1);
+        } else {
+            flicker.setPosition(0.5);
+        }
+
+        //WOBBLE GOAL-------------------------------
+        //41 degrees???
+        if (gamepad2.a) {
+            lift.setPosition(0.22);
+            lift2.setPosition(0.22);
+            lift3.setPosition(0.22);
+        }
+
+        //180 degrees
+        if (gamepad2.b) {
+            lift.setPosition(1);
+            lift2.setPosition(1);
+            lift3.setPosition(1);
+        }
+
+        //back to set position
+        if (gamepad2.x) {
+            lift.setPosition(0);
+            lift2.setPosition(0);
+            lift3.setPosition(0);
+        }
+
+        //open close claw
+        if(gamepad2.y && !changed) {
+            claw.setPosition(1);
+            changed = true;
+        } else if (!gamepad1.y) {
+            changed = false;
+        }
 
         shooter.setPower(shooterPower);
         shooter2.setPower(shooterPower);
 
-        pulley.setPower(pulleyPower*0.5);
+       pulley.setPower(pulleyPower*0.5);
 
-        leftBack.setPower((x - y - z)*.75);
+        intake.setPower(intakePower);
+
+       leftBack.setPower((x - y - z)*.75);
         leftFront.setPower((-x - y -z)*.75);
         rightBack.setPower((-x - y + z)*.75);
         rightFront.setPower((x - y + z)*.75);
 
 
     }
-
 }
+
