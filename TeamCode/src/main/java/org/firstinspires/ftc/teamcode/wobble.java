@@ -59,8 +59,6 @@ public class wobble extends OpMode
     }
     @Override
     public void loop() {
-
-
         //GAMEPAD 1 ------------------------------------------
 
         //wobble goal
