@@ -188,7 +188,7 @@ public class teleop extends OpMode
             intakePower = 0;
         }
 
-        //flicker moves back and forth 90 degrees continuous
+        //flicker moves back and forth 90 degrees 
         if ((gamepad1.right_trigger)>0.1) {
             flicker.setPosition(flicker.getPosition() + 0.1);
         } else if ((gamepad1.left_trigger) >0.1) {
@@ -198,28 +198,28 @@ public class teleop extends OpMode
         }
 
         //WOBBLE GOAL-------------------------------
-        //41 degrees???
+        //41 degrees idk what values???
         if (gamepad2.a) {
             lift.setPosition(0.22);
             lift2.setPosition(0.22);
             lift3.setPosition(0.22);
         }
 
-        //180 degrees
+        //180 degrees idk what values????
         if (gamepad2.b) {
             lift.setPosition(1);
             lift2.setPosition(1);
             lift3.setPosition(1);
         }
 
-        //back to set position
+        //back to set position idk values ???
         if (gamepad2.x) {
             lift.setPosition(0);
             lift2.setPosition(0);
             lift3.setPosition(0);
         }
 
-        //open close claw
+        //open close claw wont open or close???????
         if(gamepad2.y && !changed) {
             claw.setPosition(1);
             changed = true;
@@ -230,7 +230,7 @@ public class teleop extends OpMode
         shooter.setPower(shooterPower);
         shooter2.setPower(shooterPower);
 
-       pulley.setPower(pulleyPower*0.5);
+       pulley.setPower(pulleyPower*0.15);
 
         intake.setPower(intakePower);
 
