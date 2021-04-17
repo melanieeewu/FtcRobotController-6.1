@@ -51,20 +51,20 @@ import com.qualcomm.robotcore.util.Range;
  * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
-@Autonomous(name="Pushbot: Auto Drive By Encoder", group="pushbotHardware")
-public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
+@Autonomous(name="EncoderHigh", group="pushbotHardware")
+public class EncoderHigh extends LinearOpMode {
 
     /* Declare OpMode members. */
     pushbotHardware robot   = new pushbotHardware();   // Use a Pushbot's hardware
     private ElapsedTime     runtime = new ElapsedTime();
 
-    static final double     COUNTS_PER_MOTOR_REV    = 58.012 ;    // eg: TETRIX Motor Encoder
+    static final double     COUNTS_PER_MOTOR_REV    = 1400 ;    // eg: TETRIX Motor Encoder
     static final double    DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
     static final double     WHEEL_DIAMETER_INCHES   =2.95 ;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-                                                      (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double     DRIVE_SPEED             = 0.5;
-    static final double     TURN_SPEED              = 0.25;
+    static final double     COUNTS_PER_INCH         = 58;
+
+    static final double     DRIVE_SPEED             = 0.01;
+    static final double     TURN_SPEED              = 0.015;
 
     @Override
     public void runOpMode() {
@@ -96,25 +96,25 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-       // encoderDrive(DRIVE_SPEED,  48,  48, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
+        // encoderDrive(DRIVE_SPEED,  48,  48, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
         //encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-       // encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+        // encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
         //encoderDrive(TURN_SPEED,  -12, 12, 4.0);  // S2: Turn  left
 
 
-      //  robot.leftClaw.setPosition(1.0);            // S4: Stop and close the claw.
-      //  robot.rightClaw.setPosition(0.0);
-       // sleep(1000);     // pause for servos to move
+        //  robot.leftClaw.setPosition(1.0);            // S4: Stop and close the claw.
+        //  robot.rightClaw.setPosition(0.0);
+        // sleep(1000);     // pause for servos to move
 
         robot.lift1.setPosition(0);                                            //starting postion
         robot.lift2.setPosition(0);
         robot.lift3.setPosition(0);
         robot.claw.setPosition(0);
 
-        encoderDrive(DRIVE_SPEED,  36,  36, 5.0);  // go up 3 tiles
-        encoderDrive(TURN_SPEED,   12, -12, 4.0);  // turn right
+        encoderDrive(DRIVE_SPEED,  -12,  -12, 0);  // go up 3 tiles
+        encoderDrive(TURN_SPEED,   12, -12, 0);  // turn right
 
-        robot.lift1.setPosition(0.8);                                            //drop off wobble goal
+      robot.lift1.setPosition(0.8);                                            //drop off wobble goal
         robot.lift2.setPosition(0.6);
         robot.lift3.setPosition(0.7);
         robot.claw.setPosition(1);
@@ -227,10 +227,11 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
             // However, if you require that BOTH motors have finished their moves before the robot continues
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() &&
-                   (runtime.seconds() < timeoutS) &&
-                   (robot.leftFront.isBusy() && robot.rightBack.isBusy())) {
+                    (runtime.seconds() < timeoutS) &&
+                    (robot.leftFront.isBusy() && robot.rightBack.isBusy()))
+            {
 
-                    robot.claw.setPosition(1);
+                robot.claw.setPosition(1);
 
             }
 
@@ -264,4 +265,3 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
     }
 
 }
-
