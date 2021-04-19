@@ -63,8 +63,8 @@ public class EncoderHigh extends LinearOpMode {
     static final double     WHEEL_DIAMETER_INCHES   =2.95 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = 58;
 
-    static final double     DRIVE_SPEED             = 0.01;
-    static final double     TURN_SPEED              = 0.015;
+    static final double     DRIVE_SPEED             = 0.5;
+    static final double     TURN_SPEED              = 0.25;
 
     @Override
     public void runOpMode() {
