@@ -198,9 +198,7 @@ public class EncoderHigh extends LinearOpMode {
 
             // Determine new target position, and pass to motor controller
             newLeftTarget = robot.leftFront.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newLeftTarget = robot.leftBack.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
             newRightTarget = robot.rightFront.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-            newRightTarget = robot.rightBack.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
             robot.leftFront.setTargetPosition(newLeftTarget);
             robot.leftBack.setTargetPosition(newLeftTarget);
             robot.rightFront.setTargetPosition(newRightTarget);
